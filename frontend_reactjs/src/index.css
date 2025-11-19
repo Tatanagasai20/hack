@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer base {
+  :root {
+    /* Vintage Urban Theme - Warm earth tones with urban sophistication */
+    --background: 35 20% 96%; /* Warm cream/beige */
+    --foreground: 25 15% 20%; /* Deep brown */
+    --card: 30 15% 94%; /* Soft taupe */
+    --card-foreground: 25 15% 20%;
+    --popover: 30 15% 94%;
+    --popover-foreground: 25 15% 20%;
+    --primary: 215 30% 35%; /* Deep slate blue - urban skyline */
+    --primary-foreground: 35 20% 98%;
+    --secondary: 20 40% 55%; /* Warm terracotta - urban brick */
+    --secondary-foreground: 35 20% 98%;
+    --muted: 35 10% 90%; /* Light beige */
+    --muted-foreground: 25 10% 45%;
+    --accent: 85 25% 45%; /* Olive green - urban parks */
+    --accent-foreground: 35 20% 98%;
+    --destructive: 5 75% 55%; /* Burnt rust red */
+    --destructive-foreground: 35 20% 98%;
+    --border: 30 15% 85%; /* Warm gray */
+    --input: 30 15% 92%;
+    --ring: 215 30% 35%;
+    --chart-1: 215 30% 45%; /* Slate blue */
+    --chart-2: 20 40% 55%; /* Terracotta */
+    --chart-3: 85 25% 45%; /* Olive */
+    --chart-4: 35 50% 60%; /* Golden brown */
+    --chart-5: 5 60% 50%; /* Rust */
+    --radius: 0.5rem;
+  }
+  .dark {
+    /* Dark mode - Deep urban night theme */
+    --background: 25 15% 12%; /* Deep brown-black */
+    --foreground: 35 20% 92%;
+    --card: 25 15% 15%;
+    --card-foreground: 35 20% 92%;
+    --popover: 25 15% 15%;
+    --popover-foreground: 35 20% 92%;
+    --primary: 215 40% 55%; /* Muted slate blue */
+    --primary-foreground: 35 20% 98%;
+    --secondary: 20 35% 45%; /* Dark terracotta */
+    --secondary-foreground: 35 20% 92%;
+    --muted: 25 10% 20%;
+    --muted-foreground: 35 10% 65%;
+    --accent: 85 20% 40%; /* Dark olive */
+    --accent-foreground: 35 20% 92%;
+    --destructive: 5 70% 50%;
+    --destructive-foreground: 35 20% 98%;
+    --border: 25 10% 25%;
+    --input: 25 10% 20%;
+    --ring: 215 40% 55%;
+    --chart-1: 215 40% 55%;
+    --chart-2: 20 35% 45%;
+    --chart-3: 85 20% 40%;
+    --chart-4: 35 40% 50%;
+    --chart-5: 5 60% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
