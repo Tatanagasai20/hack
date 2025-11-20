@@ -1,47 +1,50 @@
+version: '3.8'
+
 services:
+
+  # ===================== AUTH SERVICE =====================
   auth-service:
     build: ./backend_java/auth-service
-    container_name: auth-service
     ports:
       - "8090:8090"
     networks:
       - urbanops_net
 
+  # ===================== ALERT SERVICE =====================
   alert-service:
     build: ./backend_java/alert-service
-    container_name: alert-service
     ports:
       - "8091:8091"
     networks:
       - urbanops_net
 
+  # ===================== TRAFFIC / INCIDENT SERVICE =====================
   trafficservice:
     build: ./backend_java/trafficservice
-    container_name: trafficservice
     ports:
       - "8092:8092"
     networks:
       - urbanops_net
 
+  # ===================== POWER SENSOR SERVICE =====================
   power-service:
     build: ./backend_java/power-service
-    container_name: power-service
     ports:
       - "8093:8093"
     networks:
       - urbanops_net
 
+  # ===================== CCTV SERVICE =====================
   cctv-service:
     build: ./backend_java/cctv-service
-    container_name: cctv-service
     ports:
       - "8094:8094"
     networks:
       - urbanops_net
 
+  # ===================== GATEWAY SERVICE =====================
   gateway-service:
     build: ./backend_java/gateway-service
-    container_name: gateway-service
     ports:
       - "8081:8081"
     depends_on:
@@ -53,27 +56,27 @@ services:
     networks:
       - urbanops_net
 
+  # ===================== PYTHON ML SERVICE =====================
   python_service:
     build: ./python/urban-operations-python
-    container_name: python_service
     ports:
       - "9000:9000"
     networks:
       - urbanops_net
 
+  # ===================== FRONTEND =====================
   frontend_reactjs:
     build:
       context: ./frontend_reactjs
       dockerfile: Dockerfile
-    container_name: frontend_reactjs
     expose:
       - "80"
     networks:
       - urbanops_net
 
-  nginx:
+  # ===================== NGINX REVERSE PROXY =====================
+  nginx_reverse_proxy:
     image: nginx:latest
-    container_name: nginx_reverse_proxy
     ports:
       - "80:80"
     volumes:
@@ -85,6 +88,7 @@ services:
     networks:
       - urbanops_net
 
+# ===================== NETWORK =====================
 networks:
   urbanops_net:
     driver: bridge

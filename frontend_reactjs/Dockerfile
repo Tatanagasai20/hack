@@ -1,26 +1,21 @@
-# ===== Stage 1: Build =====
+# Stage 1: Builder
 FROM node:20-alpine AS builder
-
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY package*.json ./
+# Ensure package-lock.json exists
+COPY package.json package-lock.json ./
+
+# Install dependencies including devDependencies (Vite)
 RUN npm install
 
-# Copy source code
+# Copy rest of project
 COPY . .
 
-# Fix vite binary permissions and build
-RUN chmod +x ./node_modules/.bin/vite
+# Build
 RUN npm run build
 
-# ===== Stage 2: Serve =====
+# Stage 2: Nginx
 FROM nginx:alpine
-
-# Copy built files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Expose port 80
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

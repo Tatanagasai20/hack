@@ -1,5 +1,6 @@
 // API base URL - Gateway service
-const API_BASE_URL = 'http://15.206.166.32/api';
+const API_BASE_URL = '/api';
+
 // Get auth token from localStorage
 function getAuthToken() {
   const user = localStorage.getItem('urbanopsUser');
@@ -139,14 +140,14 @@ export async function login(username, password) {
   }
 }
 
-export async function register(username, password, email = '', roles = ['ROLE_USER']) {
+export async function register(username, password, email = '') {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password, email, roles }),
+      body: JSON.stringify({ username, password, email }),
     });
 
     if (!response.ok) {
@@ -664,16 +665,14 @@ export async function getOnlineCamerasCount() {
 // ==================== PYTHON PREDICTIONS ====================
 
 export async function getPredictions() {
-  try {
-    const data = await apiRequest('/predictions');
-    if (!data || !Array.isArray(data)) {
-      return [];
-    }
+  const data = await apiRequest('/predictions');
+  if (Array.isArray(data)) {
     return data;
-  } catch (error) {
-    console.error('Error fetching predictions:', error);
-    return [];
   }
+  if (data?.data && Array.isArray(data.data)) {
+    return data.data;
+  }
+  return [];
 }
 
 export async function sendPredictions(predictions) {

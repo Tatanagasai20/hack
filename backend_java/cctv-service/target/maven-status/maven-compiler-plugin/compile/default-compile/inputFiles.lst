@@ -1,6 +1,6 @@
-/root/sai/UOCC-Urban-Operations-Command-Center-/backend_java/cctv-service/src/main/java/com/priacc/cctv/CctvServiceApplication.java
-/root/sai/UOCC-Urban-Operations-Command-Center-/backend_java/cctv-service/src/main/java/com/priacc/cctv/service/CameraService.java
-/root/sai/UOCC-Urban-Operations-Command-Center-/backend_java/cctv-service/src/main/java/com/priacc/cctv/model/Camera.java
-/root/sai/UOCC-Urban-Operations-Command-Center-/backend_java/cctv-service/src/main/java/com/priacc/cctv/repo/CameraRepository.java
-/root/sai/UOCC-Urban-Operations-Command-Center-/backend_java/cctv-service/src/main/java/com/priacc/cctv/controller/CameraController.java
-/root/sai/UOCC-Urban-Operations-Command-Center-/backend_java/cctv-service/src/main/java/com/priacc/cctv/security/SecurityConfig.java
+P:\devops\hack\backend_java\cctv-service\src\main\java\com\priacc\cctv\service\CameraService.java
+P:\devops\hack\backend_java\cctv-service\src\main\java\com\priacc\cctv\security\SecurityConfig.java
+P:\devops\hack\backend_java\cctv-service\src\main\java\com\priacc\cctv\controller\CameraController.java
+P:\devops\hack\backend_java\cctv-service\src\main\java\com\priacc\cctv\CctvServiceApplication.java
+P:\devops\hack\backend_java\cctv-service\src\main\java\com\priacc\cctv\model\Camera.java
+P:\devops\hack\backend_java\cctv-service\src\main\java\com\priacc\cctv\repo\CameraRepository.java

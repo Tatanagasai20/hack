@@ -1,6 +1,6 @@
-com/priacc/alert/model/Alert.class
-com/priacc/alert/repo/AlertRepository.class
-com/priacc/alert/controller/AlertController.class
-com/priacc/alert/security/SecurityConfig.class
-com/priacc/alert/AlertServiceApplication.class
-com/priacc/alert/service/AlertService.class
+com\priacc\alert\controller\AlertController.class
+com\priacc\alert\security\SecurityConfig.class
+com\priacc\alert\AlertServiceApplication.class
+com\priacc\alert\service\AlertService.class
+com\priacc\alert\repo\AlertRepository.class
+com\priacc\alert\model\Alert.class

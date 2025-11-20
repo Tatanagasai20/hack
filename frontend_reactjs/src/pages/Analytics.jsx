@@ -17,11 +17,13 @@ import {
   Legend,
 } from 'recharts';
 import { Activity, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react';
-import { getAlerts, getIncidents } from '@/lib/api';
+import { getAlerts, getIncidents, getPredictions } from '@/lib/api';
 
 export default function Analytics() {
   const [activeAlertsCount, setActiveAlertsCount] = useState(12);
   const [loading, setLoading] = useState(true);
+  const [predictionData, setPredictionData] = useState([]);
+  const [predictionError, setPredictionError] = useState(null);
 
   useEffect(() => {
     loadAnalyticsData();
@@ -29,9 +31,11 @@ export default function Analytics() {
 
   const loadAnalyticsData = async () => {
     try {
-      const [alertsData, incidentsData] = await Promise.allSettled([
+      setPredictionError(null);
+      const [alertsData, incidentsData, predictionsResult] = await Promise.allSettled([
         getAlerts(),
         getIncidents(),
+        getPredictions(),
       ]);
 
       // Get active alerts count (critical + high priority)
@@ -40,12 +44,33 @@ export default function Analytics() {
         (a) => a.priority === 'critical' || a.priority === 'high'
       ).length;
       setActiveAlertsCount(activeAlerts);
+
+      if (predictionsResult.status === 'fulfilled') {
+        setPredictionData(predictionsResult.value || []);
+      } else {
+        setPredictionData([]);
+        setPredictionError(
+          predictionsResult.reason?.message || 'Prediction service unavailable'
+        );
+      }
     } catch (error) {
       console.error('Error loading analytics data:', error);
+      setPredictionError(error.message);
+      setPredictionData([]);
     } finally {
       setLoading(false);
     }
   };
+
+  const averagePredictedSpeed =
+    predictionData.length > 0
+      ? Math.round(
+          predictionData.reduce(
+            (sum, item) => sum + (item.predicted_speed || 0),
+            0
+          ) / predictionData.length
+        )
+      : null;
   const mockTimeSeriesData = Array.from({ length: 24 }, (_, i) => ({
     timestamp: new Date(Date.now() - (23 - i) * 3600000).toISOString(),
     value: Math.floor(Math.random() * 50) + 30,
@@ -110,6 +135,15 @@ export default function Analytics() {
             trend="up"
             icon={<TrendingUp className="h-5 w-5" />}
           />
+          {averagePredictedSpeed !== null && (
+            <KPICard
+              label="AI Avg Speed"
+              value={`${averagePredictedSpeed} km/h`}
+              change={0}
+              trend="up"
+              icon={<TrendingUp className="h-5 w-5" />}
+            />
+          )}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -184,6 +218,49 @@ export default function Analytics() {
             </CardContent>
           </Card>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Traffic Predictions</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Live feed from the FastAPI model service
+            </p>
+          </CardHeader>
+          <CardContent>
+            {predictionError && (
+              <p className="text-sm text-destructive mb-4">{predictionError}</p>
+            )}
+            {predictionData.length === 0 && !predictionError && (
+              <p className="text-sm text-muted-foreground">
+                Waiting for prediction service to publish data...
+              </p>
+            )}
+            <div className="space-y-4">
+              {predictionData.slice(0, 6).map((item) => (
+                <div
+                  key={item.id || item.location}
+                  className="flex items-center justify-between rounded-lg border p-3"
+                >
+                  <div>
+                    <p className="font-semibold">{item.location}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {item.latitude?.toFixed(3)}, {item.longitude?.toFixed(3)} · Hour{' '}
+                      {item.hour}:00
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-semibold">
+                      {item.predicted_speed?.toFixed(1) ?? '--'} km/h
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Congestion: {item.congestion_index ?? '--'}%
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

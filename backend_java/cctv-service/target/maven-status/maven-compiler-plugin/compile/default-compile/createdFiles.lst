@@ -1,6 +1,6 @@
-com/priacc/cctv/controller/CameraController.class
-com/priacc/cctv/service/CameraService.class
-com/priacc/cctv/security/SecurityConfig.class
-com/priacc/cctv/CctvServiceApplication.class
-com/priacc/cctv/model/Camera.class
-com/priacc/cctv/repo/CameraRepository.class
+com\priacc\cctv\CctvServiceApplication.class
+com\priacc\cctv\repo\CameraRepository.class
+com\priacc\cctv\model\Camera.class
+com\priacc\cctv\service\CameraService.class
+com\priacc\cctv\security\SecurityConfig.class
+com\priacc\cctv\controller\CameraController.class

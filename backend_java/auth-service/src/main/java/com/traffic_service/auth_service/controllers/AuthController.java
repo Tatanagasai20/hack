@@ -54,13 +54,23 @@ public ResponseEntity<?> register(@RequestBody Map<String, Object> request) {
             return ResponseEntity.badRequest().body(Map.of("error", "Username and password are required"));
 
         // ✅ Safely convert roles (ArrayList -> Set)
-        Set<String> roles = new HashSet<>();
-        Object rolesObj = request.get("roles");
-        if (rolesObj instanceof List<?>) {
-            roles.addAll((List<String>) rolesObj);
-        } else {
-            roles.add("USER"); // default role if missing
+       Set<String> roles = new HashSet<>();
+
+Object rolesObj = request.get("roles");
+
+// If frontend sent a valid list of strings
+if (rolesObj instanceof List<?>) {
+    for (Object role : (List<?>) rolesObj) {
+        if (role instanceof String) {
+            roles.add(((String) role).toUpperCase()); // normalize
         }
+    }
+}
+
+// If empty or invalid → default
+if (roles.isEmpty()) {
+    roles.add("USER");
+}
 
         AppUser savedUser = authService.register(username, password, email, roles);
         return ResponseEntity.ok(Map.of(
