@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
 
-  # ===================== AUTH SERVICE =====================
+ 
   auth-service:
     build: ./backend_java/auth-service
     ports:
@@ -10,7 +8,7 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== ALERT SERVICE =====================
+
   alert-service:
     build: ./backend_java/alert-service
     ports:
@@ -18,7 +16,6 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== TRAFFIC / INCIDENT SERVICE =====================
   trafficservice:
     build: ./backend_java/trafficservice
     ports:
@@ -26,7 +23,7 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== POWER SENSOR SERVICE =====================
+ 
   power-service:
     build: ./backend_java/power-service
     ports:
@@ -34,7 +31,7 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== CCTV SERVICE =====================
+
   cctv-service:
     build: ./backend_java/cctv-service
     ports:
@@ -42,7 +39,6 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== GATEWAY SERVICE =====================
   gateway-service:
     build: ./backend_java/gateway-service
     ports:
@@ -56,7 +52,7 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== PYTHON ML SERVICE =====================
+
   python_service:
     build: ./python/urban-operations-python
     ports:
@@ -64,7 +60,6 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== FRONTEND =====================
   frontend_reactjs:
     build:
       context: ./frontend_reactjs
@@ -74,7 +69,7 @@ services:
     networks:
       - urbanops_net
 
-  # ===================== NGINX REVERSE PROXY =====================
+ 
   nginx_reverse_proxy:
     image: nginx:latest
     ports:
@@ -88,7 +83,7 @@ services:
     networks:
       - urbanops_net
 
-# ===================== NETWORK =====================
+
 networks:
   urbanops_net:
     driver: bridge
