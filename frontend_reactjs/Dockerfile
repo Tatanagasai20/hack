@@ -1,19 +1,26 @@
+# ==== BUILDER ====
 FROM node:20-alpine AS builder
+
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm ci
 
-# Copy source
+# Copy all source code and configs
 COPY . .
 
-# Use node or npx to run vite build instead of npm run build!
-RUN npx vite build
+# Fix executable permission on actual Vite JS file
+RUN chmod +x ./node_modules/vite/bin/vite.js
 
+# Build the app (bypassing symlink confusion by calling node directly)
+RUN node ./node_modules/vite/bin/vite.js build
+
+# ==== FINAL ====
 FROM nginx:alpine
+
+# Copy built static files to Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
