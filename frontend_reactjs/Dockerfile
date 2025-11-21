@@ -1,32 +1,28 @@
-# === Builder Stage ===
-FROM node:20-alpine as builder
+# ==== BUILDER ====
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy only package files first (best caching)
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies needed for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
 
-# Fix vite permission ONCE after install (this is the key)
-RUN chmod +x ./node_modules/.bin/vite
-
-# Build the app
+# Build the app (no permission issues, no missing native rollup)
 RUN npm run build
 
-# === Final Stage ===
+# ==== FINAL ====
 FROM nginx:alpine
 
-# Copy built assets from builder
+# Copy built assets
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config if you have one (optional)
+# Optional: custom nginx config
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
