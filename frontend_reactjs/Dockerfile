@@ -8,6 +8,9 @@ COPY package.json package-lock.json ./
 # Install dependencies including devDependencies (Vite)
 RUN npm install
 
+# Fix permissions on Vite executable
+RUN chmod +x ./node_modules/.bin/vite
+
 # Copy rest of project
 COPY . .
 
