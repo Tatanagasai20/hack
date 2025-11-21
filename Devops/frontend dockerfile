@@ -1,24 +1,26 @@
-# Stage 1: Builder
+# ==== BUILDER ====
 FROM node:20-alpine AS builder
+
 WORKDIR /app
 
-# Ensure package-lock.json exists
-COPY package.json package-lock.json ./
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci
 
-# Install dependencies including devDependencies (Vite)
-RUN npm install
-
-# Fix permissions on Vite executable
-RUN chmod +x ./node_modules/.bin/vite
-
-# Copy rest of project
+# Copy all source code and configs
 COPY . .
 
-# Build
-RUN npm run build
+# Fix executable permission on actual Vite JS file
+RUN chmod +x ./node_modules/vite/bin/vite.js
 
-# Stage 2: Nginx
+# Build the app (bypassing symlink confusion by calling node directly)
+RUN node ./node_modules/vite/bin/vite.js build
+
+# ==== FINAL ====
 FROM nginx:alpine
+
+# Copy built static files to Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
