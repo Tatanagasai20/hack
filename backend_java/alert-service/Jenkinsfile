@@ -56,19 +56,19 @@ pipeline {
                 """
             }
         }
+       stage('Deploy to EKS') {
+           steps {
+              sh '''
+              kubectl apply -f backend_java/database/mysql-secret.yaml
+              kubectl apply -f backend_java/database/mysql-pvc.yaml
+              kubectl apply -f backend_java/database/mysql-deployment.yaml
+              kubectl apply -f backend_java/database/mysql-service.yaml
 
-        stage('Deploy to EKS') {
-            steps {
-                sh """
-                kubectl apply -f database/mysql-secret.yaml
-
-                kubectl apply -f database/mysql-pvc.yaml
-                kubectl apply -f database/mysql-deployment.yaml
-                kubectl apply -f database/mysql-service.yaml
-
-                kubectl apply -f k8s/alert-service/deployment.yaml
-                kubectl apply -f k8s/alert-service/service.yaml
-                """
+              kubectl apply -f backend_java/k8s/alert-service/deployment.yaml
+              kubectl apply -f backend_java/k8s/alert-service/service.yaml
+             '''
+    }
+}        
             }
         }
     }
