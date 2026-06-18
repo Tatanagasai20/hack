@@ -17,7 +17,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                dir('auth-service') {
+                dir('backend_java/auth-service') {
                     sh 'mvn clean package -DskipTests'
                 }
             }
