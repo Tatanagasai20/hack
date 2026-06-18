@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_ACCOUNT_ID = "784369107852"
+        AWS_REGION     = "ap-south-1"
+        ECR_REPO       = "auth-service"
+        IMAGE_TAG      = "${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                dir('auth-service') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+    }
+}
