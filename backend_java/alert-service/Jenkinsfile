@@ -18,7 +18,10 @@ pipeline {
         stage('Build Application') {
             steps {
                 dir('backend_java/auth-service') {
-                    sh 'mvn clean package -DskipTests'
+                    // This forces Maven to use the Java 21 version installed on the machine
+                    withEnv(["JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64"]) {
+                        sh 'mvn clean package -DskipTests'
+                    }
                 }
             }
         }
