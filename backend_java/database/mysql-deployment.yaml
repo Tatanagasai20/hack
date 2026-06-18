@@ -20,18 +20,20 @@ spec:
     spec:
       containers:
       - name: mysql
-
         image: mysql:8.0
 
         ports:
         - containerPort: 3306
 
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: password
+        envFrom:
+        - secretRef:
+            name: mysql-secret
 
-        - name: MYSQL_DATABASE
-          value: hackathon
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-storage
+
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
