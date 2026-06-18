@@ -20,7 +20,6 @@ spec:
     spec:
       containers:
       - name: alert-service
-
         image: 784369107852.dkr.ecr.ap-south-1.amazonaws.com/alert-service:latest
 
         imagePullPolicy: Always
@@ -30,19 +29,33 @@ spec:
 
         env:
         - name: DB_HOST
-          value: mysql
-
-        - name: DB_PORT
-          value: "3306"
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: DB_HOST
 
         - name: DB_NAME
-          value: hackathon
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: DB_NAME
 
-        - name: DB_USERNAME
-          value: admin
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: DB_USER
 
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-secret
-              key: password
+              key: DB_PASSWORD
+
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
