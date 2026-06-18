@@ -9,19 +9,30 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
+        stage('Check Java') {
+            steps {
+                sh '''
+                    echo "JAVA_HOME=$JAVA_HOME"
+                    which java
+                    java -version
+                    which javac
+                    javac -version
+                    mvn -version
+                '''
+            }
+        }
+
         stage('Build Application') {
             steps {
                 dir('backend_java/auth-service') {
-                    // This forces Maven to use the Java 21 version installed on the machine
-                    withEnv(["JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64"]) {
-                        sh 'mvn clean package -DskipTests'
-                    }
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
