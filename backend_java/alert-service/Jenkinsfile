@@ -64,6 +64,7 @@ pipeline {
                 kubectl apply -n ${NAMESPACE} -f backend_java/database/mysql-service.yaml
 
                 # Apply service (safe)
+                kubectl apply -n hackathon -f backend_java/k8s/alert-service/deployment.yaml
                 kubectl apply -n ${NAMESPACE} -f backend_java/k8s/alert-service/service.yaml
 
                 # UPDATE deployment image (IMPORTANT PART)
