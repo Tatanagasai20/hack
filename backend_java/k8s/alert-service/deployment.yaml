@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: alert-service
-        image: 784369107852.dkr.ecr.ap-south-1.amazonaws.com/alert-service:latest
+        image: 784369107852.dkr.ecr.ap-south-1.amazonaws.com/alert-service:v1
 
         imagePullPolicy: Always
 
