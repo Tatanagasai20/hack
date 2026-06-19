@@ -5,12 +5,14 @@ pipeline {
         AWS_ACCOUNT_ID = '784369107852'
         AWS_REGION     = 'ap-south-1'
         ECR_REPO       = 'alert-service'
-        IMAGE_TAG      = "${BUILD_NUMBER}"
+        NAMESPACE      = 'hackathon'
+        IMAGE_TAG      = "v${BUILD_NUMBER}"
+        ECR_URL        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
@@ -34,41 +36,55 @@ pipeline {
             }
         }
 
-        stage('Login ECR') {
+        stage('Login to ECR') {
             steps {
                 sh """
                 aws ecr get-login-password --region ${AWS_REGION} | \
-                docker login --username AWS --password-stdin \
-                ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                docker login --username AWS --password-stdin ${ECR_URL}
                 """
             }
         }
 
-        stage('Push Image') {
+        stage('Push Image to ECR') {
             steps {
                 sh """
-                docker tag ${ECR_REPO}:${IMAGE_TAG} \
-                ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
-
-                docker push \
-                ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_URL}/${ECR_REPO}:${IMAGE_TAG}
+                docker push ${ECR_URL}/${ECR_REPO}:${IMAGE_TAG}
                 """
             }
         }
 
         stage('Deploy to EKS') {
             steps {
-                sh '''
-                kubectl apply -f backend_java/database/mysql-secret.yaml
-                kubectl apply -f backend_java/database/mysql-pvc.yaml
-                kubectl apply -f backend_java/database/mysql-deployment.yaml
-                kubectl apply -f backend_java/database/mysql-service.yaml
+                sh """
+                # Apply DB (PVC already works - safe to re-apply)
+                kubectl apply -n ${NAMESPACE} -f backend_java/database/mysql-secret.yaml
+                kubectl apply -n ${NAMESPACE} -f backend_java/database/mysql-pvc.yaml
+                kubectl apply -n ${NAMESPACE} -f backend_java/database/mysql-deployment.yaml
+                kubectl apply -n ${NAMESPACE} -f backend_java/database/mysql-service.yaml
 
-                kubectl apply -f backend_java/k8s/alert-service/deployment.yaml
-                kubectl apply -f backend_java/k8s/alert-service/service.yaml
-                '''
+                # Apply service (safe)
+                kubectl apply -n ${NAMESPACE} -f backend_java/k8s/alert-service/service.yaml
+
+                # UPDATE deployment image (IMPORTANT PART)
+                kubectl set image deployment/alert-service \
+                alert-service=${ECR_URL}/${ECR_REPO}:${IMAGE_TAG} \
+                -n ${NAMESPACE}
+
+                # Wait for rollout
+                kubectl rollout status deployment/alert-service -n ${NAMESPACE}
+                """
             }
         }
+    }
 
+    post {
+        success {
+            echo "✅ Deployment successful: ${IMAGE_TAG}"
+        }
+
+        failure {
+            echo "❌ Deployment failed"
+        }
     }
 }
